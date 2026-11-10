@@ -1,0 +1,137 @@
+\documentclass[10pt,letterpaper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\renewcommand{\labelitemii}{--}
+
+% Bold, unnumbered run-in-free paragraph heading
+\newcommand{\parhead}[1]{\par\medskip\noindent\textbf{#1}\par\smallskip}
+
+\begin{document}
+
+%======================== TITLE PAGE ========================
+\pagenumbering{Alph}
+\begin{titlepage}
+    \centering
+    \vspace*{0.5cm}
+    \includegraphics[width=0.3\textwidth]{logopoli.png}\par
+    \vspace{1cm}
+    {\LARGE\scshape Laboratory of Quantum Technology\par}
+    \vspace{0.8cm}
+    {\large A.A. 2026-2027\par}
+    \vspace{0.5cm}
+    \rule{\textwidth}{0.6pt}\par
+    \vspace{0.2cm}
+    {\Large\scshape Report\par}
+    \vspace{0.1cm}
+    \rule{\textwidth}{0.6pt}\par
+    \vspace{2cm}
+    \makebox[0.7\textwidth]{Samuele Antonini\dotfill 363753}
+    \vfill
+\end{titlepage}
+\pagenumbering{arabic}
+
+%======================== TOC ========================
+\tableofcontents
+\clearpage
+
+%======================== CHAPTER 1 ========================
+\chapter{Quantum Communication Lab}
+
+\section{Introduction}
+
+In the field of communications, the need to protect information from unauthorized external accesses has always been a priority over the centuries. The science that studies this is cryptography, which has the objective to study algorithms (cypher) able to encode the original message combining it with an additional information (the key) generating therefore a cyphertext, that can be decoded only by who possesses exactly the correct key. There are two main classes of cryptographic algorithms:
+
+\begin{itemize}
+    \item Asymmetric Cryptographic algorithms: They are based on a couple of different keys. The sender (Alice, A) encodes the message using a public key, while the receiver (Bob, B) uses its own secret private key to decode it.
+    \item Symmetric Cryptographic algorithms: There is an unique private key shared between Alice and Bob, used for both encoding and decoding and that needs to be exchanged through a secure channel.
+\end{itemize}
+
+\subsection{RSA Algorithm:}
+
+Nowadays, one of the most used classical asymmetric algorithms is the RSA. It is based on the prime numbers properties and modular algebra, and it consists in the following steps:
+
+\begin{enumerate}
+    \item B chooses 2 big prime numbers p and q and it calculates the module $n = pq$. Then, it calculates the Euler Totient function $\phi(n) = (p-1)(q-1)$.
+    \item B chooses an integer e such that it is coprime with $\phi(n)$ (i.e.\ $GCD(e, \phi(n)) = 1$). Then it calculates the private key d such that $e \cdot d \equiv 1 \pmod{\phi(n)}$.
+    \item B makes public the couple $(e, n)$ as its Public Key and it holds secret the couple $(d, n)$ as its Private Key.
+    \item A encodes the message M calculating $C = M^e \pmod{n}$ and it sends the cyphertext to B. Finally, B decodes the message calculating $M = C^d \pmod{n}$.
+\end{enumerate}
+
+The problem is that the RSA security is purely computational, meaning it is based on the high complexity for a classical computer to factorize very big prime numbers. However, the possible advent of quantum computers and the Shor's algorithm can allow to solve this mathematical problem in much shorter times, making the RSA vulnerable.
+
+\subsection{OTP Algorithm:}
+
+To overcome this problem, the solution is therefore to use an algorithm that is theoretically impossible to decrypt, that is the One-Time Pad (OTP), a symmetric algorithm based on the XOR logical operator between binary numbers. The algorithm consists in the following steps:
+
+\begin{enumerate}
+    \item A translates the message M in binary and applies the XOR with a random key K of the same length of M ($C = M \oplus K$).
+    \item B decodes the message applying the same operation on the cyphertext ($M = C \oplus K$).
+\end{enumerate}
+
+Even if it is mathematically impossible to decrypt (because trying to decrypt it testing all the possible keys would generate all the possible words with the exact same probability, making impossible to understand which is the original message), however the OTP requires that the key K needs to be as long as the message and that it is secret, therefore the presence of a possible ``man in the middle'' in the secure channel where the key exchange happens would give the complete knowledge of the message to the intruder. It is exactly to solve the key exchange problem that it was decided to use quantum mechanics with protocols like the BB84 (Quantum Key Distribution - QKD).
+
+\subsection{BB84 Protocol, Quantum Key Distribution:}
+
+The protocol uses Quantum Mechanics to generate and distribute the key K among A and B. Specifically, it encodes the information on the polarization of single photons, which act as qubits. The work steps are the following:
+
+\parhead{Working Principle:}
+
+\begin{enumerate}
+    \item A uses a single photon source and a polarization rotator to linearly polarize a photon. For every single photon, A randomly chooses a basis (+ or x) and randomly chooses a bit (0 or 1). It encodes the bit using an angle of 0 (Horizontal, H) or 90 (Vertical, V) degrees if the rectilinear basis (+) was chosen, or -45 and 45 degrees if the diagonal basis (x) was chosen. Then, it sends the photon to B.
+    \item B doesn't know the polarization state of the incoming photon, so it independently and randomly chooses a measurement basis (+ or x) to read each single qubit. To do this, B uses its own polarization rotator followed by a PBS (Polarizing Beam Splitter) and two detectors to measure the photon's state.
+    \item If B happens to choose the same basis used by A, it measures the photon correctly with 100\% of probability; however, if B chooses the wrong basis (for example, A used the + basis and B uses the x basis), the photon is forced into a quantum superposition and B has a 50\% probability to obtain a random value (0 or 1). Once all the photons are sent, A and B use a classical public channel to confront only the sequence of the bases they used for each photon and they remove all the bits where their bases didn't coincide. At this point, they publicly compare a random sample of their final resulting bits, and since only the same bases is holded, the results of B must perfectly coincide with A. If they actually coincide, A and B will use the remaining bits sequence as the secret encryption key.
+\end{enumerate}
+
+\parhead{Presence of Eve:}
+
+As described from the procedure, the protocol doesn't physically avoid a photon to be intercepted by a ``man in the middle'' (Eve), but it allows to detect when this happens thanks to the quantum nature of the qubit. The ``no-cloning Theorem'' of quantum mechanics, in fact, states that ``there is no physical process that takes an arbitrary unknown pure state to two perfect copies''. This means that Eve cannot duplicate the traveling photon, but it has to detect and read it choosing a random basis (same process of B) and then re-sending a new generated photon to B. This process inevitably alters the quantum state of the system, in fact, 50\% of the times Eve will choose the wrong basis, sending to Bob a photon in a rotated state, and consequently, even if Bob uses the correct basis (the same used by A), it will have a 50\% probability of getting the wrong bit. Therefore, Eve's intrusion introduces a 25\% total probability of error (0.5 from Eve multiplied by 0.5 from Bob) on the bits that Alice and Bob expect to be perfectly identical. (For example: A sends an H photon, meaning 0. Eve guesses the diagonal basis, projecting the photon into a 45 degrees state, and sends it to B. Bob correctly uses the Horizontal-Vertical basis like A, but since it is receiving a diagonal photon from Eve, the PBS will act randomly and Bob will read V, meaning 1, instead of 0 in 50\% of the cases).
+
+\parhead{Advantage of BB84:}
+
+For this reason, through the final comparing of the random sample of the bits, A and B can evaluate the error rate (QBER), and if they find an error rate close to 25\% (in real-world applications, a strict threshold like 3\% is used), it means that an intruder is present, so the bits are discarded and the procedure is repeated until the test bits match. The protocol guarantees therefore the absolute certainty of having a secure private key to use for the One-Time Pad encryption.
+
+\subsection{Single Photon Avalanche Diode (SPAD)}
+
+To correctly detect the photon after it passed through the polarization rotator, a single photon detector is required. A commonly used device is the SPAD (Single Photon Avalanche Diode), that typically consists of a p-i-p-n photodiode reverse-biased above its breakdown voltage. When the photon arrives, it is absorbed in the intrinsic i-region, called, \textbf{absorption region}, creating an electron-hole pair. The electron is then transported and accelerated by the built-in electric field of the p-n junction into the highly doped p region, which acts as the \textbf{multiplication region}. Here, the electric field is at its maximum and the electron is accelerated so much that it triggers a self-sustaining impact ionization avalanche. This translates into a macroscopic output current, making us able to detect the single photon.
+
+\parhead{Important characteristics of the device:}
+
+\begin{itemize}
+    \item \textbf{Geiger Mode and Quenching:} The SPAD works in Geiger Mode. Since the arrival of a single photon creates a massive macroscopic current, any subsequent photon arriving during the avalanche has no additional effect, meaning the device cannot count the exact number of simultaneous photons. For this reason, it is necessary to have a quenching circuit (often a passive circuit using a resistor) that stops the avalanche by decreasing the voltage below the breakdown threshold, and then restores the overvoltage. During this quenching and resetting, the device is blind to other incoming photons and this period gives the maximum frequency (count rate) the SPAD can operate at.
+    \item \textbf{After-pulsing and Hold-off time:} During the avalanche process, some carriers can remain trapped by defects in the SPAD material and can be released with a certain delay, triggering a second avalanche (after-pulsing). To avoid this, it is necessary to impose a period of forced inactivity after every detection, called \textit{dead-time} or \textit{hold-off time} until all the trapped carriers are completely released.
+    \item \textbf{Dark Count Rate (DCR):} Thermal excitation or material defects can generate an electron that starts the avalanche process even if no photon has arrived, resulting in a false detection (dark count).
+    \item \textbf{Jitter:} It represents the statistical fluctuation of the time delay between the actual photon arrival and the generation of the macroscopic output pulse.
+\end{itemize}
+
+\hspace*{1.5em}For the practical implementation of the QKD protocol, it's important to characterized two critical aspects of the SPAD during the laboratory experiment:
+
+\begin{itemize}
+    \item \textbf{SPAD Detection Efficiency (DE):} It is the probability that an incident photon successfully yields a count. It can be calculated as the ratio between the counts registered by the SPAD and the actual number of photons sent. To measure this, the following substitution method setup can be used. A continuous laser beam is divided into two paths, one path goes into a reference Optical Power Meter to measure the macroscopic power (Watt), while the other path goes through a Variable Optical Attenuator (VOA) that reduces the light to the single-photon level before reaching the SPAD (Detector Under Test). The laboratory efficiency can be calculated with the following formula:
+    \begin{equation}
+        \eta\left(\lambda, \frac{N}{t}\right) = \frac{hc\,(N - N_{env})}{\lambda t \tau C\,(P - P_{env})}
+    \end{equation}
+    where:
+    \begin{itemize}
+        \item $\frac{N - N_{env}}{t}$ is the total number of clicks $N$ registered during the measurement time $t$, minus the environmental dark counts $N_{env}$.
+        \item $\frac{\lambda (P - P_{env})}{hc}$ is the incident photon rate of the reference optical path, calculated by taking the effective optical power $P - P_{env}$ and dividing it by the energy of a single photon $E = \frac{hc}{\lambda}$.
+        \item $\tau$ is the specific transmittance of the attenuator.
+        \item $C$ is the calibration factor of the beam splitter for the laser.
+    \end{itemize}
+    However, since the efficiency decreases as the photon flux increases (because more photons arrive during the blind dead-time), it can be defined the \textbf{Zero-flux efficiency}, which is the theoretical maximum efficiency of the device when the photon flux tends to zero. We can so obtain the following equation:
+    \begin{equation}
+        \eta = \eta_0^{\lambda} \left(1 - \frac{D_t \cdot N}{t}\right)
+    \end{equation}
+    \item \textbf{SPAD Security Characterization (Backflash):} Although the BB84 protocol detects Eve if she intercepts the qubits, the SPAD introduces a vulnerability, in fact during the avalanche process, some electron-hole pairs can recombine, emitting photons that travel backwards into the optical fiber. These are called ``backflash photons'' and Eve could detect this photons to deduce which of Bob's detectors clicked, finding the key without leaving traces. It is so necessary to quantify this Information Leakage by using an SP-OTDR setup, which utilizes an Optical Circulator to isolate and measure the backflash emission with a sensitive reference detector.
+\end{itemize}
+
+\end{document}
