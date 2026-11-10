@@ -45,9 +45,8 @@
 \clearpage
 
 %======================== CHAPTER 1 ========================
-\chapter{Quantum Communication Lab}
 
-\section{Introduction}
+\chapter{Introduction}
 
 In the field of communications, the need to protect information from unauthorized external accesses has always been a priority over the centuries. The science that studies this is cryptography, which has the objective to study algorithms (cypher) able to encode the original message combining it with an additional information (the key) generating therefore a cyphertext, that can be decoded only by who possesses exactly the correct key. There are two main classes of cryptographic algorithms:
 
@@ -56,20 +55,8 @@ In the field of communications, the need to protect information from unauthorize
     \item Symmetric Cryptographic algorithms: There is an unique private key shared between Alice and Bob, used for both encoding and decoding and that needs to be exchanged through a secure channel.
 \end{itemize}
 
-\subsection{RSA Algorithm:}
-
-Nowadays, one of the most used classical asymmetric algorithms is the RSA. It is based on the prime numbers properties and modular algebra, and it consists in the following steps:
-
-\begin{enumerate}
-    \item B chooses 2 big prime numbers p and q and it calculates the module $n = pq$. Then, it calculates the Euler Totient function $\phi(n) = (p-1)(q-1)$.
-    \item B chooses an integer e such that it is coprime with $\phi(n)$ (i.e.\ $GCD(e, \phi(n)) = 1$). Then it calculates the private key d such that $e \cdot d \equiv 1 \pmod{\phi(n)}$.
-    \item B makes public the couple $(e, n)$ as its Public Key and it holds secret the couple $(d, n)$ as its Private Key.
-    \item A encodes the message M calculating $C = M^e \pmod{n}$ and it sends the cyphertext to B. Finally, B decodes the message calculating $M = C^d \pmod{n}$.
-\end{enumerate}
-
+Nowadays, one of the most used classical asymmetric algorithms is the RSA. It is based on the prime numbers properties and modular algebra.
 The problem is that the RSA security is purely computational, meaning it is based on the high complexity for a classical computer to factorize very big prime numbers. However, the possible advent of quantum computers and the Shor's algorithm can allow to solve this mathematical problem in much shorter times, making the RSA vulnerable.
-
-\subsection{OTP Algorithm:}
 
 To overcome this problem, the solution is therefore to use an algorithm that is theoretically impossible to decrypt, that is the One-Time Pad (OTP), a symmetric algorithm based on the XOR logical operator between binary numbers. The algorithm consists in the following steps:
 
@@ -80,7 +67,7 @@ To overcome this problem, the solution is therefore to use an algorithm that is 
 
 Even if it is mathematically impossible to decrypt (because trying to decrypt it testing all the possible keys would generate all the possible words with the exact same probability, making impossible to understand which is the original message), however the OTP requires that the key K needs to be as long as the message and that it is secret, therefore the presence of a possible ``man in the middle'' in the secure channel where the key exchange happens would give the complete knowledge of the message to the intruder. It is exactly to solve the key exchange problem that it was decided to use quantum mechanics with protocols like the BB84 (Quantum Key Distribution - QKD).
 
-\subsection{BB84 Protocol, Quantum Key Distribution:}
+\chapter{BB84 Protocol, Quantum Key Distribution:}
 
 The protocol uses Quantum Mechanics to generate and distribute the key K among A and B. Specifically, it encodes the information on the polarization of single photons, which act as qubits. The work steps are the following:
 
