@@ -9,6 +9,7 @@
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
 
+
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{4pt}
 \renewcommand{\labelitemii}{--}
@@ -45,9 +46,8 @@
 \clearpage
 
 %======================== CHAPTER 1 ========================
-\chapter{Quantum Communication Lab}
 
-\section{Introduction}
+\chapter*{Introduction}
 
 In the field of communications, the need to protect information from unauthorized external accesses has always been a priority over the centuries. The science that studies this is cryptography, which has the objective to study algorithms (cypher) able to encode the original message combining it with an additional information (the key) generating therefore a cyphertext, that can be decoded only by who possesses exactly the correct key. There are two main classes of cryptographic algorithms:
 
@@ -56,20 +56,8 @@ In the field of communications, the need to protect information from unauthorize
     \item Symmetric Cryptographic algorithms: There is an unique private key shared between Alice and Bob, used for both encoding and decoding and that needs to be exchanged through a secure channel.
 \end{itemize}
 
-\subsection{RSA Algorithm:}
-
-Nowadays, one of the most used classical asymmetric algorithms is the RSA. It is based on the prime numbers properties and modular algebra, and it consists in the following steps:
-
-\begin{enumerate}
-    \item B chooses 2 big prime numbers p and q and it calculates the module $n = pq$. Then, it calculates the Euler Totient function $\phi(n) = (p-1)(q-1)$.
-    \item B chooses an integer e such that it is coprime with $\phi(n)$ (i.e.\ $GCD(e, \phi(n)) = 1$). Then it calculates the private key d such that $e \cdot d \equiv 1 \pmod{\phi(n)}$.
-    \item B makes public the couple $(e, n)$ as its Public Key and it holds secret the couple $(d, n)$ as its Private Key.
-    \item A encodes the message M calculating $C = M^e \pmod{n}$ and it sends the cyphertext to B. Finally, B decodes the message calculating $M = C^d \pmod{n}$.
-\end{enumerate}
-
+Nowadays, one of the most used classical asymmetric algorithms is the RSA. It is based on the prime numbers properties and modular algebra.
 The problem is that the RSA security is purely computational, meaning it is based on the high complexity for a classical computer to factorize very big prime numbers. However, the possible advent of quantum computers and the Shor's algorithm can allow to solve this mathematical problem in much shorter times, making the RSA vulnerable.
-
-\subsection{OTP Algorithm:}
 
 To overcome this problem, the solution is therefore to use an algorithm that is theoretically impossible to decrypt, that is the One-Time Pad (OTP), a symmetric algorithm based on the XOR logical operator between binary numbers. The algorithm consists in the following steps:
 
@@ -78,60 +66,254 @@ To overcome this problem, the solution is therefore to use an algorithm that is 
     \item B decodes the message applying the same operation on the cyphertext ($M = C \oplus K$).
 \end{enumerate}
 
-Even if it is mathematically impossible to decrypt (because trying to decrypt it testing all the possible keys would generate all the possible words with the exact same probability, making impossible to understand which is the original message), however the OTP requires that the key K needs to be as long as the message and that it is secret, therefore the presence of a possible ``man in the middle'' in the secure channel where the key exchange happens would give the complete knowledge of the message to the intruder. It is exactly to solve the key exchange problem that it was decided to use quantum mechanics with protocols like the BB84 (Quantum Key Distribution - QKD).
+Although the one-time pad is theoretically unbreakable, its security depends on the key being truly random, kept secret, and at least as long as the message. Consequently, if an attacker were able to intercept the secure channel used to exchange the key through a "man in the middle" attack, for example, they could obtain the key and completely compromise the message. 
+Quantum mechanics was introduced to address this key exchange problem through protocols such as BB84, a quantum key distribution (QKD) protocol.
 
-\subsection{BB84 Protocol, Quantum Key Distribution:}
 
-The protocol uses Quantum Mechanics to generate and distribute the key K among A and B. Specifically, it encodes the information on the polarization of single photons, which act as qubits. The work steps are the following:
+\chapter{BB84 Protocol, Quantum Key Distribution}
 
-\parhead{Working Principle:}
+BB84 is a quantum key distribution protocol that allows two parties, Alice (A) and Bob (B), to generate a shared secret key K over an insecure channel,while allowing them to detect disturbances in the quantum communication channel by monitoring the Quantum Bit Error Rate (QBER), as discussed later.
+It exploits the principles of quantum mechanics, in particular the no cloning theorem,
+which states that it is impossible to create an identical copy of an arbitrary unknown quantum state,
+and the non-orthogonality of states belonging to different polarization bases.
+Since these states cannot be perfectly distinguished, an eavesdropper (Eve) attempting to measure them may instroduce detectable disturbances.
+
+The protocol consists of the following steps:
+
+\section{Working Principle}
 
 \begin{enumerate}
-    \item A uses a single photon source and a polarization rotator to linearly polarize a photon. For every single photon, A randomly chooses a basis (+ or x) and randomly chooses a bit (0 or 1). It encodes the bit using an angle of 0 (Horizontal, H) or 90 (Vertical, V) degrees if the rectilinear basis (+) was chosen, or -45 and 45 degrees if the diagonal basis (x) was chosen. Then, it sends the photon to B.
-    \item B doesn't know the polarization state of the incoming photon, so it independently and randomly chooses a measurement basis (+ or x) to read each single qubit. To do this, B uses its own polarization rotator followed by a PBS (Polarizing Beam Splitter) and two detectors to measure the photon's state.
-    \item If B happens to choose the same basis used by A, it measures the photon correctly with 100\% of probability; however, if B chooses the wrong basis (for example, A used the + basis and B uses the x basis), the photon is forced into a quantum superposition and B has a 50\% probability to obtain a random value (0 or 1). Once all the photons are sent, A and B use a classical public channel to confront only the sequence of the bases they used for each photon and they remove all the bits where their bases didn't coincide. At this point, they publicly compare a random sample of their final resulting bits, and since only the same bases is holded, the results of B must perfectly coincide with A. If they actually coincide, A and B will use the remaining bits sequence as the secret encryption key.
+    \item Alice randomly generates a sequence of bits and for each bit randomly chooses one of the two polarization bases: the linear basis
+            $Z = \{|H\rangle, |V\rangle\}$ or the diagonal basis $X = \{|+\rangle, |-\rangle\}$. 
+            
+        \begin{table}[htbp]
+            \centering
+            \caption{Encoding of classical bits into polarization states in the BB84 protocol.}
+            \label{tab:bb84_encoding}
+            \begin{tabular}{c|cc}
+                \hline
+                \textbf{Bit} & \textbf{Rectilinear basis ($Z$)}
+                     & \textbf{Diagonal basis ($X$)} \\
+                \hline
+                0 & $|H\rangle$ ($0$)  & $|+\rangle$ ($\pi/4$) \\
+                1 & $|V\rangle$ ($\pi/2$) & $|-\rangle$ ($-\pi/4$) \\
+                \hline
+            \end{tabular}
+        \end{table}
+
+    \item B doesn't know the polarization state of the incoming photon, so he independently and randomly chooses a measurement basis (Z or X) to read each single qubit. To do this, B uses its own polarization rotator followed by a PBS (Polarizing Beam Splitter) and two detectors to measure the photon's state.
+    \item If B happens to choose the same basis used by A, it measures the photon correctly with 100\% probability; however, when Bob chooses a different basis, the measuremet outcome becomes completely random, with a 50\% probability for each possible bit value.
+    \item Once all the photons are sent, A and B use a classical public channel to compare the sequences of the bases they used for each photon and they remove all the bits where their bases didn't coincide, This step is called "sifting".
+    \item At this point, they publicly compare a random sample of their sifted bit to estimate the QBER. Even when their measurement coincide, experimental imprefections may introdice errors.
 \end{enumerate}
 
-\parhead{Presence of Eve:}
 
-As described from the procedure, the protocol doesn't physically avoid a photon to be intercepted by a ``man in the middle'' (Eve), but it allows to detect when this happens thanks to the quantum nature of the qubit. The ``no-cloning Theorem'' of quantum mechanics, in fact, states that ``there is no physical process that takes an arbitrary unknown pure state to two perfect copies''. This means that Eve cannot duplicate the traveling photon, but it has to detect and read it choosing a random basis (same process of B) and then re-sending a new generated photon to B. This process inevitably alters the quantum state of the system, in fact, 50\% of the times Eve will choose the wrong basis, sending to Bob a photon in a rotated state, and consequently, even if Bob uses the correct basis (the same used by A), it will have a 50\% probability of getting the wrong bit. Therefore, Eve's intrusion introduces a 25\% total probability of error (0.5 from Eve multiplied by 0.5 from Bob) on the bits that Alice and Bob expect to be perfectly identical. (For example: A sends an H photon, meaning 0. Eve guesses the diagonal basis, projecting the photon into a 45 degrees state, and sends it to B. Bob correctly uses the Horizontal-Vertical basis like A, but since it is receiving a diagonal photon from Eve, the PBS will act randomly and Bob will read V, meaning 1, instead of 0 in 50\% of the cases).
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth]
+        {figures/fig_bb84_protocol.png}
+    \caption{Polarization states, measurement bases,and sifting in the BB84 protocol.}
+    \label{fig:bb84_sifting}
+\end{figure}
+
+
+If the estimated QBER is sufficiently low to allow secure ay generation, Alice and Bob perform error correrction to
+reconcile thier bit sequences, followed by privacy amplification to reduce the information potentially availabre to Eve.
+The resulting shared secret key can then be used to encryption.
+
+
+\section{Presence of Eve}
+
+Although BB84 does not prevent Eve from intercepting the trasmitted photons, an interception attempt may introduce detectable error as state before.
+
+A simple example is the intercept-resend attack, in which Eve measures each intercepted photons in a randomly chosen polarization basis and then prepares a new phoyon in the measured state to send to Bob.
+Since Eve does not know tAlice's preparation basis, she has a 50\% chance of choosing the wrong one. 
+In this case, even when Bob measures in the correct basis (Alice's basis), he has a probability of $1/2$ of obtaining the wrong bit.
+
+Therefore, assuming an ideal scenario with no experimental imperfections, the Quantum Bit Error Rate among the sifted bits is
+
+\[
+    \mathrm{QBER} 
+    = \frac{1}{2} \cdot \frac{1}{2}
+    = \frac{1}{4} = 25\%.
+\]
+
 
 \parhead{Advantage of BB84:}
 
-For this reason, through the final comparing of the random sample of the bits, A and B can evaluate the error rate (QBER), and if they find an error rate close to 25\% (in real-world applications, a strict threshold like 3\% is used), it means that an intruder is present, so the bits are discarded and the procedure is repeated until the test bits match. The protocol guarantees therefore the absolute certainty of having a secure private key to use for the One-Time Pad encryption.
+By publicly comparing a randomly selected subset of their sifted bits, Alice and Bob can estimate the Quantum Bit Error Rate (QBER), which quantifies the discrepancies
+between their measurement outcomes.
 
-\subsection{Single Photon Avalanche Diode (SPAD)}
+A high QBER may indicate the presence of an eavesdropper, although errors can also arise from experimental imperfections and detector noise. For instance, an ideal intercept-resend attack introduces a QBER of 25\%, but
+this value does not represent a universal security threshold.
+If the estimated QBER is sufficiently low to allow secure key extraction, Alice and Bob can apply error correction and privacy amplification to the remaining bits.
+The resulting secret key can then be used for classical encryption, for example through the One-Time Pad (OTP).
 
-To correctly detect the photon after it passed through the polarization rotator, a single photon detector is required. A commonly used device is the SPAD (Single Photon Avalanche Diode), that typically consists of a p-i-p-n photodiode reverse-biased above its breakdown voltage. When the photon arrives, it is absorbed in the intrinsic i-region, called, \textbf{absorption region}, creating an electron-hole pair. The electron is then transported and accelerated by the built-in electric field of the p-n junction into the highly doped p region, which acts as the \textbf{multiplication region}. Here, the electric field is at its maximum and the electron is accelerated so much that it triggers a self-sustaining impact ionization avalanche. This translates into a macroscopic output current, making us able to detect the single photon.
+However, the security of a practical QKD system also depends on the physical implementation of its components, since imperfections in single-photon detectors may introduce additional vulnerabilities.
 
-\parhead{Important characteristics of the device:}
+
+
+\chapter{SPAD Detection Efficiency and Characterization}
+
+\section{Objective of the Experiment}
+
+Single-photon detectors are essential components of a QKD system. However, unlike ideal detectors, real devices exhibit finite detection efficiency and limitations that affect their performance and security.
+In this experiment, we will focus on characterizing the performance of a Single-Photon Avalanche Diode (SPAD) by measuring its detection efficiency using the substitution method.
+
+\section{Operating Principles of the SPAD}
+
+To implement the BB84 protocol, a detector capable of registering individual photons is required.
+A commonly used device is the SPAD (Single Photon Avalanche Diode), a semiconductor photodiode
+reverse-biased above its breakdown voltage. When the photon is absorbed in the active region, it can create an electron-hole pair. The resultinn charge carriers are accelerated by the strong
+electric field in the multiplication region. Here,
+the electric field is at its maximum and the carriers are accelerated so much that it triggers a self-sustaining impact
+ionization avalanche. This translates into a macroscopic output current, making us able to detect the
+single photon.
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.62\linewidth]
+        {figures/fig_spad_avalanche.png}
+    \caption{Comparison of avalanche multiplication in linear APD operation (top) and Geiger-mode SPAD operation (bottom).}
+    \label{fig:spad_avalanche}
+\end{figure}
+
 
 \begin{itemize}
-    \item \textbf{Geiger Mode and Quenching:} The SPAD works in Geiger Mode. Since the arrival of a single photon creates a massive macroscopic current, any subsequent photon arriving during the avalanche has no additional effect, meaning the device cannot count the exact number of simultaneous photons. For this reason, it is necessary to have a quenching circuit (often a passive circuit using a resistor) that stops the avalanche by decreasing the voltage below the breakdown threshold, and then restores the overvoltage. During this quenching and resetting, the device is blind to other incoming photons and this period gives the maximum frequency (count rate) the SPAD can operate at.
-    \item \textbf{After-pulsing and Hold-off time:} During the avalanche process, some carriers can remain trapped by defects in the SPAD material and can be released with a certain delay, triggering a second avalanche (after-pulsing). To avoid this, it is necessary to impose a period of forced inactivity after every detection, called \textit{dead-time} or \textit{hold-off time} until all the trapped carriers are completely released.
-    \item \textbf{Dark Count Rate (DCR):} Thermal excitation or material defects can generate an electron that starts the avalanche process even if no photon has arrived, resulting in a false detection (dark count).
-    \item \textbf{Jitter:} It represents the statistical fluctuation of the time delay between the actual photon arrival and the generation of the macroscopic output pulse.
+
+    \item \textbf{Geiger Mode and Quenching:} The SPAD works in Geiger Mode. Since the arrival of a single photon can trigger a macroscopic avalanche current, any subsequent photon arriving during the avalanche has no additional measurable effect, meaning the device cannot count the exact number of simultaneous photons. 
+        For this reason, a quenching circuit (often a passive circuit using a resistor) is necessary to stop the avalanche by decreasing the voltage below the breakdown threshold, and then restore the overvoltage.
+        During quenching and resetting, the detector is temporarily unable to register new photons. This dead time sets an upper limit on the achievable count rate.
+
+    \item \textbf{Afterpulsing and Hold-off Time:} During the avalanche process, some carriers can remain trapped by defects in the SPAD material and can be released with a certain delay, triggering a second avalanche (afterpulsing).
+        To reduce this effect, a period of forced inactivity is imposed after each detection, called the \textit{hold-off time}, allowing trapped carriers to be released before the detector is reactivated, thereby reducing the probability of afterpulsing.
+
+    \item \textbf{Dark Count Rate (DCR):} Thermal excitation or material defects can generate charge carriers that trigger an avalanche even if no photon has arrived, resulting in a false detection (dark count).
+
+    \item \textbf{Timing Jitter:} It represents the statistical fluctuation of the time delay between the actual photon arrival and the generation of the macroscopic output pulse.
+
 \end{itemize}
 
-\hspace*{1.5em}For the practical implementation of the QKD protocol, it's important to characterized two critical aspects of the SPAD during the laboratory experiment:
+
+\section{Detection Efficiency and Substitution Method}
+
+The SPAD Detection Efficiency is the probability that an incident photon successfully yields a count.
+It can be calculated as the ratio between the detected signal count rate and the incident photon flux.
+
+To measure this, the substitution method setup can be used.
+A continuous laser beam is divided into two paths:
+one path goes into a reference Optical Power Meter to measure the optical power (in watts), while the other path goes through a Variable Optical Attenuator (VOA) that reduces the light to a low photon-flux regime before reaching the SPAD (Detector Under Test).
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\linewidth]
+        {figures/fig_substitution_method.png}
+    \caption{Experimental setup for SPAD detection efficiency characterization using the substitution method.}
+    \label{fig:substitution_method}
+\end{figure}
+
+
+The detection efficiency can be calculated as:
+
+\begin{equation}
+    \eta\left(\lambda, \frac{N}{t}\right)
+    =
+    \frac{hc\,(N-N_{\mathrm{env}})}
+    {\lambda t \tau C\,(P-P_{\mathrm{env}})}
+    \label{eq:spad_efficiency}
+\end{equation}
+
+where:
 
 \begin{itemize}
-    \item \textbf{SPAD Detection Efficiency (DE):} It is the probability that an incident photon successfully yields a count. It can be calculated as the ratio between the counts registered by the SPAD and the actual number of photons sent. To measure this, the following substitution method setup can be used. A continuous laser beam is divided into two paths, one path goes into a reference Optical Power Meter to measure the macroscopic power (Watt), while the other path goes through a Variable Optical Attenuator (VOA) that reduces the light to the single-photon level before reaching the SPAD (Detector Under Test). The laboratory efficiency can be calculated with the following formula:
-    \begin{equation}
-        \eta\left(\lambda, \frac{N}{t}\right) = \frac{hc\,(N - N_{env})}{\lambda t \tau C\,(P - P_{env})}
-    \end{equation}
-    where:
-    \begin{itemize}
-        \item $\frac{N - N_{env}}{t}$ is the total number of clicks $N$ registered during the measurement time $t$, minus the environmental dark counts $N_{env}$.
-        \item $\frac{\lambda (P - P_{env})}{hc}$ is the incident photon rate of the reference optical path, calculated by taking the effective optical power $P - P_{env}$ and dividing it by the energy of a single photon $E = \frac{hc}{\lambda}$.
-        \item $\tau$ is the specific transmittance of the attenuator.
-        \item $C$ is the calibration factor of the beam splitter for the laser.
-    \end{itemize}
-    However, since the efficiency decreases as the photon flux increases (because more photons arrive during the blind dead-time), it can be defined the \textbf{Zero-flux efficiency}, which is the theoretical maximum efficiency of the device when the photon flux tends to zero. We can so obtain the following equation:
-    \begin{equation}
-        \eta = \eta_0^{\lambda} \left(1 - \frac{D_t \cdot N}{t}\right)
-    \end{equation}
-    \item \textbf{SPAD Security Characterization (Backflash):} Although the BB84 protocol detects Eve if she intercepts the qubits, the SPAD introduces a vulnerability, in fact during the avalanche process, some electron-hole pairs can recombine, emitting photons that travel backwards into the optical fiber. These are called ``backflash photons'' and Eve could detect this photons to deduce which of Bob's detectors clicked, finding the key without leaving traces. It is so necessary to quantify this Information Leakage by using an SP-OTDR setup, which utilizes an Optical Circulator to isolate and measure the backflash emission with a sensitive reference detector.
+    \item $\frac{N-N_{\mathrm{env}}}{t}$ is the net signal count rate, obtained by subtracting the background counts $N_{\mathrm{env}}$ from the total counts $N$ registered during the measurement time $t$.
+
+    \item $\frac{\lambda(P-P_{\mathrm{env}})}{hc}$ is the photon flux corresponding to the background-corrected reference optical power, where $E=hc/\lambda$ is the energy of a single photon.
+
+    \item $\tau$ is the transmittance of the optical attenuator.
+
+    \item $C$ is the calibration factor relating the reference power measurement to the optical power entering the attenuated path.
+\end{itemize}
+
+However, the apparent detection efficiency decreases as the incident photon flux increases, since more photons arrive during the detector dead time.
+For this reason, the zero-flux detection efficiency, $\eta_0(\lambda)$, is defined as the limiting efficiency when the incident photon flux tends to zero.
+
+Under non-paralyzable dead-time considerations and, neglecting background contributions, the following relation can be used:
+
+\begin{equation}
+    \eta\left(\lambda,\frac{N}{t}\right)
+    =
+    \eta_0(\lambda)
+    \left(1-\frac{D_t N}{t}\right)
+    \label{eq:zero_flux_efficiency}
+\end{equation}
+
+where $D_t$ represents the detector dead time.
+
+By measuring the detection efficiency at different count rates, $\eta_0(\lambda)$ can be estimated from the intercept of a linear fit in the low-count-rate regime.
+
+
+\chapter{Backflash Propagation and Detection Security}
+
+\section{Backflash Emission and Security Risks}
+
+Although BB84 can reveal certain eavesdropping attacks through an increase in the QBER, real SPAD detectors may introduce additional security vulnerabilities.
+
+During the avalanche process, the SPAD can emit photons that propagate backwards into the optical fiber. These are called \textit{backflash photons}.
+Eve could potentially detect these photons and deduce which of Bob's detectors registered a click, without necessarily introducing additional errors in the quantum communication channel.
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.80\linewidth]
+        {figures/fig_backflash_security.png}
+    \caption{Schematic representation of a potential backflash side-channel attack in a QKD system.}
+    \label{fig:backflash_security}
+\end{figure}
+
+
+\section{Experimental Setup: SP-OTDR}
+
+The backflash emission is characterized using a Single-Photon Optical Time-Domain Reflectometry (SP-OTDR) setup as shown in Figure~\ref{fig:sp_otdr_setup}.
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]
+        {figures/fig_sp_otdr_setup.png}
+    \caption{Experimental SP-OTDR setup forbackflash characterization using pulsed laser sources, optical circulators, reference SPADs and time-tagging electronics.}
+    \label{fig:sp_otdr_setup}
+\end{figure}
+
+
+A pulsed laser source is attenuated to the single-photon level and directed towards the Detector Under Test (DUT). When a photon triggers an avalanche, the DUT may emit backflash photons that propagate backwards through the optical fiber.
+An optical circulator redirects the backward propagating light towards a reference InGaAs/InP SPAD detector. By recording the detection times of both detectors, temporal correlations can be analyzed to identify the backflash signal and distinguish it from background events and optical reflections.
+
+\section{Information Leakage Estimation}
+
+The backflash emission can be quantified by analyzing the temporal correlations between the DUT and the reference detector.
+
+After subtracting the background contribution, the information leakage parameter can be estimated as
+
+\begin{equation}
+    P_L =
+    \frac{N_{\mathrm{bf}}}
+    {N_{\mathrm{DUT}} \eta_{\mathrm{CH}}
+    \eta_{\mathrm{OTDR}}}
+    \label{eq:information_leakage}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $N_{\mathrm{bf}}$ is the net number of detected backflash photons.
+
+    \item $N_{\mathrm{DUT}}$ is the total number of valid detections registered by the DUT.
+
+    \item $\eta_{\mathrm{CH}}$ accounts for the optical transmission losses between the DUT and the reference detector.
+
+    \item $\eta_{\mathrm{OTDR}}$ is the detection efficiency of the reference SPAD.
 \end{itemize}
 
 \end{document}

@@ -36,3 +36,6 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# LaTeX Workshop output (PDF and auxiliary files)
+/prereports/build/
