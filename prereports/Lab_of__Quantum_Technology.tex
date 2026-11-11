@@ -36,7 +36,15 @@
     \vspace{0.1cm}
     \rule{\textwidth}{0.6pt}\par
     \vspace{2cm}
-    \makebox[0.7\textwidth]{Samuele Antonini\dotfill 363753}
+    {\large
+    \makebox[0.6\textwidth]{Antonini Samuele\dotfill S363753}\par\smallskip
+    \makebox[0.6\textwidth]{Acca Francesco\dotfill S360541}\par\smallskip
+    \makebox[0.6\textwidth]{Donati Davide\dotfill S352165}\par\smallskip
+    \makebox[0.6\textwidth]{Fernando Nirvan\dotfill S361492}\par\smallskip
+    \makebox[0.6\textwidth]{Girotto Giacomo\dotfill S361610}\par\smallskip
+    \makebox[0.6\textwidth]{Riola Leonardo Antonio\dotfill S353851}\par\smallskip
+    \makebox[0.6\textwidth]{Fedele Stefania Pia\dotfill S375486}\par
+    }
     \vfill
 \end{titlepage}
 \pagenumbering{arabic}
@@ -48,12 +56,13 @@
 %======================== CHAPTER 1 ========================
 
 \chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
 
 In the field of communications, the need to protect information from unauthorized external accesses has always been a priority over the centuries. The science that studies this is cryptography, which has the objective to study algorithms (cypher) able to encode the original message combining it with an additional information (the key) generating therefore a cyphertext, that can be decoded only by who possesses exactly the correct key. There are two main classes of cryptographic algorithms:
 
 \begin{itemize}
     \item Asymmetric Cryptographic algorithms: They are based on a couple of different keys. The sender (Alice, A) encodes the message using a public key, while the receiver (Bob, B) uses its own secret private key to decode it.
-    \item Symmetric Cryptographic algorithms: There is an unique private key shared between Alice and Bob, used for both encoding and decoding and that needs to be exchanged through a secure channel.
+    \item Symmetric Cryptographic algorithms: There is a unique private key shared between Alice and Bob, used for both encoding and decoding and that needs to be exchanged through a secure channel.
 \end{itemize}
 
 Nowadays, one of the most used classical asymmetric algorithms is the RSA. It is based on the prime numbers properties and modular algebra.
@@ -66,21 +75,21 @@ To overcome this problem, the solution is therefore to use an algorithm that is 
     \item B decodes the message applying the same operation on the cyphertext ($M = C \oplus K$).
 \end{enumerate}
 
-Although the one-time pad is theoretically unbreakable, its security depends on the key being truly random, kept secret, and at least as long as the message. Consequently, if an attacker were able to intercept the secure channel used to exchange the key through a "man in the middle" attack, for example, they could obtain the key and completely compromise the message. 
+Although the one-time pad is theoretically unbreakable, its security depends on the key being truly random, kept secret, and at least as long as the message. Consequently, if an attacker were able to intercept the secure channel used to exchange the key through a ``man in the middle'' attack, for example, they could obtain the key and completely compromise the message. 
 Quantum mechanics was introduced to address this key exchange problem through protocols such as BB84, a quantum key distribution (QKD) protocol.
 
 
 \chapter{BB84 Protocol, Quantum Key Distribution}
 
-BB84 is a quantum key distribution protocol that allows two parties, Alice (A) and Bob (B), to generate a shared secret key K over an insecure channel,while allowing them to detect disturbances in the quantum communication channel by monitoring the Quantum Bit Error Rate (QBER), as discussed later.
+BB84 is a quantum key distribution protocol that allows two parties, Alice (A) and Bob (B), to generate a shared secret key K over an insecure channel, while allowing them to detect disturbances in the quantum communication channel by monitoring the Quantum Bit Error Rate (QBER), as discussed later.
 It exploits the principles of quantum mechanics, in particular the no cloning theorem,
 which states that it is impossible to create an identical copy of an arbitrary unknown quantum state,
 and the non-orthogonality of states belonging to different polarization bases.
-Since these states cannot be perfectly distinguished, an eavesdropper (Eve) attempting to measure them may instroduce detectable disturbances.
-
-The protocol consists of the following steps:
+Since these states cannot be perfectly distinguished, an eavesdropper (Eve) attempting to measure them may introduce detectable disturbances.
 
 \section{Working Principle}
+
+The protocol consists of the following steps:
 
 \begin{enumerate}
     \item Alice randomly generates a sequence of bits and for each bit randomly chooses one of the two polarization bases: the linear basis
@@ -101,10 +110,10 @@ The protocol consists of the following steps:
             \end{tabular}
         \end{table}
 
-    \item B doesn't know the polarization state of the incoming photon, so he independently and randomly chooses a measurement basis (Z or X) to read each single qubit. To do this, B uses its own polarization rotator followed by a PBS (Polarizing Beam Splitter) and two detectors to measure the photon's state.
-    \item If B happens to choose the same basis used by A, it measures the photon correctly with 100\% probability; however, when Bob chooses a different basis, the measuremet outcome becomes completely random, with a 50\% probability for each possible bit value.
-    \item Once all the photons are sent, A and B use a classical public channel to compare the sequences of the bases they used for each photon and they remove all the bits where their bases didn't coincide, This step is called "sifting".
-    \item At this point, they publicly compare a random sample of their sifted bit to estimate the QBER. Even when their measurement coincide, experimental imprefections may introdice errors.
+    \item B doesn't know the polarization state of the incoming photon, so he independently and randomly chooses a measurement basis (Z or X) to read each single qubit. To do this, B uses his own polarization rotator followed by a PBS (Polarizing Beam Splitter) and two detectors to measure the photon's state.
+    \item If B happens to choose the same basis used by A, he measures the photon correctly with 100\% probability; however, when Bob chooses a different basis, the measurement outcome becomes completely random, with a 50\% probability for each possible bit value.
+    \item Once all the photons are sent, A and B use a classical public channel to compare the sequences of the bases they used for each photon and they remove all the bits where their bases didn't coincide. This step is called ``sifting''.
+    \item At this point, they publicly compare a random sample of their sifted bits to estimate the QBER. Even when their bases coincide, experimental imperfections may introduce errors.
 \end{enumerate}
 
 
@@ -112,22 +121,17 @@ The protocol consists of the following steps:
     \centering
     \includegraphics[width=0.95\linewidth]
         {figures/fig_bb84_protocol.png}
-    \caption{Polarization states, measurement bases,and sifting in the BB84 protocol.}
+    \caption{Polarization states, measurement bases, and sifting in the BB84 protocol.}
     \label{fig:bb84_sifting}
 \end{figure}
 
 
-If the estimated QBER is sufficiently low to allow secure ay generation, Alice and Bob perform error correrction to
-reconcile thier bit sequences, followed by privacy amplification to reduce the information potentially availabre to Eve.
-The resulting shared secret key can then be used to encryption.
-
-
 \section{Presence of Eve}
 
-Although BB84 does not prevent Eve from intercepting the trasmitted photons, an interception attempt may introduce detectable error as state before.
+Although BB84 does not prevent Eve from intercepting the transmitted photons, an interception attempt may introduce detectable errors, as stated before.
 
-A simple example is the intercept-resend attack, in which Eve measures each intercepted photons in a randomly chosen polarization basis and then prepares a new phoyon in the measured state to send to Bob.
-Since Eve does not know tAlice's preparation basis, she has a 50\% chance of choosing the wrong one. 
+A simple example is the intercept-resend attack, in which Eve measures each intercepted photon in a randomly chosen polarization basis and then prepares a new photon in the measured state to send to Bob.
+Since Eve does not know Alice's preparation basis, she has a 50\% chance of choosing the wrong one. 
 In this case, even when Bob measures in the correct basis (Alice's basis), he has a probability of $1/2$ of obtaining the wrong bit.
 
 Therefore, assuming an ideal scenario with no experimental imperfections, the Quantum Bit Error Rate among the sifted bits is
@@ -139,7 +143,7 @@ Therefore, assuming an ideal scenario with no experimental imperfections, the Qu
 \]
 
 
-\parhead{Advantage of BB84:}
+\section{Advantage of BB84}
 
 By publicly comparing a randomly selected subset of their sifted bits, Alice and Bob can estimate the Quantum Bit Error Rate (QBER), which quantifies the discrepancies
 between their measurement outcomes.
@@ -164,9 +168,9 @@ In this experiment, we will focus on characterizing the performance of a Single-
 
 To implement the BB84 protocol, a detector capable of registering individual photons is required.
 A commonly used device is the SPAD (Single Photon Avalanche Diode), a semiconductor photodiode
-reverse-biased above its breakdown voltage. When the photon is absorbed in the active region, it can create an electron-hole pair. The resultinn charge carriers are accelerated by the strong
+reverse-biased above its breakdown voltage. When the photon is absorbed in the active region, it can create an electron-hole pair. The resulting charge carriers are accelerated by the strong
 electric field in the multiplication region. Here,
-the electric field is at its maximum and the carriers are accelerated so much that it triggers a self-sustaining impact
+the electric field is at its maximum and the carriers are accelerated so much that they trigger a self-sustaining impact
 ionization avalanche. This translates into a macroscopic output current, making us able to detect the
 single photon.
 
@@ -240,7 +244,7 @@ where:
 However, the apparent detection efficiency decreases as the incident photon flux increases, since more photons arrive during the detector dead time.
 For this reason, the zero-flux detection efficiency, $\eta_0(\lambda)$, is defined as the limiting efficiency when the incident photon flux tends to zero.
 
-Under non-paralyzable dead-time considerations and, neglecting background contributions, the following relation can be used:
+Under non-paralyzable dead-time considerations and neglecting background contributions, the following relation can be used:
 
 \begin{equation}
     \eta\left(\lambda,\frac{N}{t}\right)
@@ -283,7 +287,7 @@ The backflash emission is characterized using a Single-Photon Optical Time-Domai
     \centering
     \includegraphics[width=\linewidth]
         {figures/fig_sp_otdr_setup.png}
-    \caption{Experimental SP-OTDR setup forbackflash characterization using pulsed laser sources, optical circulators, reference SPADs and time-tagging electronics.}
+    \caption{Experimental SP-OTDR setup for backflash characterization using pulsed laser sources, optical circulators, reference SPADs and time-tagging electronics.}
     \label{fig:sp_otdr_setup}
 \end{figure}
 
