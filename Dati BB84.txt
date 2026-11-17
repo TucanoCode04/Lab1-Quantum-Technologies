@@ -1,0 +1,68 @@
+A:
+
+DATA BIT: 	10001 01110 01100 00000 	(ROMA)
+KEY BIT: 	01100 11011 11001 11111		0
+ENCRYPTED BIT: 	11101 10101 10101 11111
+
+B:
+
+RECEIVED BIT: 	11101 10101 10101 11111
+KEY BIT: 	01100 11011 11001 11111		0
+DATA BIT: 	10001 01110 01100 00000 	(ROMA)
+LETTER: 	R     O     M     A
+
+
+
+##############################################################################
+
+
+
+/*Abbiamo utilizzato le stesse basi di prima per Alice e Bob*/
+
+A:
+
+DATA BIT: 	10001 01110 01100 00000 	(ROMA)
+KEY BIT: 	01100 11011 11001 11111		RAW BIT: 0 100
+ENCRYPTED BIT: 	11101 10101 10101 11111
+
+-----------------------------------------------------------------------------------------
+E:
+
+		   x+xx+ x+++x ++xx+ x+xx+		 +
+		A: 01100 11011 11001 11111		 0 100
+
+		   xx+++ xxx++ xx+++ x+++x		 +
+		E: 01010 11111 00101 11000	RAW BIT: 0 110
+		   #   # #  #      # ##   	
+
+		   x+xx+ x+++x ++xx+ x+xx+		 +
+		B: 00000 10010 01001 11000		 0 100	/*Veri*/
+
+-----------------------------------------------------------------------------------------
+B:
+
+RECEIVED BIT: 	11101 10101 10101 11111
+KEY BIT:	00000 10010 01001 11000		RAW BIT: 0 110  /*Truccati*/
+		 XX    X  X X       XXX		   	    x
+DATA BIT: 	11101 00111 11100 00111
+LETTER: 	E     H     D     H
+
+Per il calcolo delle lettere siccome con la chiave sbagliata alcuni gruppi di 5 bit non rientrano nella codifica a 26 lettere, pertanto ci sono 2 possibilità:
+	- Calcoliamo i bit ricevuti in modulo 26 base 2 (quello che abbiamo fatto qua)
+	- Riveliamo una lettera invalida e deduciamo che ci sia Eve
+
+Possibilità:
+	- Diciamo che il protocollo ha fallito nel nostro caso (anche e soprattutto con i bit aggiuntivi)
+	- Modifichiamo il terzo bit extra (l'unico che possiamo modificare) e otteniamo 25% QBER
+	- Facciamo entrambi
+//	- Rompiamo il secondo Beam Splitter
+
+
+
+
+A	E	B
++	x	+	50% same	50% wrong
+x	+	x	50% same	50% wrong
++	+	+	100% same
+x	x	x	100% same
+
