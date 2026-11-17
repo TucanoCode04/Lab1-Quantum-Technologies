@@ -55,8 +55,8 @@
 
 %======================== CHAPTER 1 ========================
 
-\chapter*{Introduction}
-\addcontentsline{toc}{chapter}{Introduction}
+\chapter{Introduction and Theoretical Foundations}
+
 
 In the field of communications, the need to protect information from unauthorized external accesses has always been a priority over the centuries. The science that studies this is cryptography, which has the objective to study algorithms (cypher) able to encode the original message combining it with an additional information (the key) generating therefore a cyphertext, that can be decoded only by who possesses exactly the correct key. There are two main classes of cryptographic algorithms:
 
@@ -79,7 +79,7 @@ Although the one-time pad is theoretically unbreakable, its security depends on 
 Quantum mechanics was introduced to address this key exchange problem through protocols such as BB84, a quantum key distribution (QKD) protocol.
 
 
-\chapter{BB84 Protocol, Quantum Key Distribution}
+\section{BB84 Protocol, Quantum Key Distribution}
 
 BB84 is a quantum key distribution protocol that allows two parties, Alice (A) and Bob (B), to generate a shared secret key K over an insecure channel, while allowing them to detect disturbances in the quantum communication channel by monitoring the Quantum Bit Error Rate (QBER), as discussed later.
 It exploits the principles of quantum mechanics, in particular the no cloning theorem,
@@ -87,7 +87,9 @@ which states that it is impossible to create an identical copy of an arbitrary u
 and the non-orthogonality of states belonging to different polarization bases.
 Since these states cannot be perfectly distinguished, an eavesdropper (Eve) attempting to measure them may introduce detectable disturbances.
 
-\section{Working Principle}
+\subsection{Working Principle}
+
+\large \textbf{Base rettilinia è + base diagobale e X, cambiare gli angoli seconda la convenzione che abbiamo utlizzato alla fine}
 
 The protocol consists of the following steps:
 
@@ -126,7 +128,11 @@ The protocol consists of the following steps:
 \end{figure}
 
 
-\section{Presence of Eve}
+\large\textbf{Inserire derivazione e spiegazione piu approfondita di QUBER, con riferimento a un attacco di intercettazione e ritrasmissione (intercept-resend attack) e alla probabilità di errore introdotta da Eve.
+Deep dive nel no cloning theorem e nella non-ortogonalità degli stati quantistici, spiegando perché Eve non può copiare perfettamente i fotoni inviati da Alice senza introdurre errori.}
+
+
+\subsection{Presence of Eve}
 
 Although BB84 does not prevent Eve from intercepting the transmitted photons, an interception attempt may introduce detectable errors, as stated before.
 
@@ -143,7 +149,7 @@ Therefore, assuming an ideal scenario with no experimental imperfections, the Qu
 \]
 
 
-\section{Advantage of BB84}
+\subsection{Advantage of BB84}
 
 By publicly comparing a randomly selected subset of their sifted bits, Alice and Bob can estimate the Quantum Bit Error Rate (QBER), which quantifies the discrepancies
 between their measurement outcomes.
@@ -157,14 +163,14 @@ However, the security of a practical QKD system also depends on the physical imp
 
 
 
-\chapter{SPAD Detection Efficiency and Characterization}
+\section{SPAD Detection Efficiency and Characterization}
 
-\section{Objective of the Experiment}
+\subsection{Objective of the Experiment}
 
 Single-photon detectors are essential components of a QKD system. However, unlike ideal detectors, real devices exhibit finite detection efficiency and limitations that affect their performance and security.
 In this experiment, we will focus on characterizing the performance of a Single-Photon Avalanche Diode (SPAD) by measuring its detection efficiency using the substitution method.
 
-\section{Operating Principles of the SPAD}
+\subsection{Operating Principles of the SPAD}
 
 To implement the BB84 protocol, a detector capable of registering individual photons is required.
 A commonly used device is the SPAD (Single Photon Avalanche Diode), a semiconductor photodiode
@@ -200,7 +206,8 @@ single photon.
 \end{itemize}
 
 
-\section{Detection Efficiency and Substitution Method}
+
+\subsection{Detection Efficiency and Substitution Method}
 
 The SPAD Detection Efficiency is the probability that an incident photon successfully yields a count.
 It can be calculated as the ratio between the detected signal count rate and the incident photon flux.
@@ -259,9 +266,9 @@ where $D_t$ represents the detector dead time.
 By measuring the detection efficiency at different count rates, $\eta_0(\lambda)$ can be estimated from the intercept of a linear fit in the low-count-rate regime.
 
 
-\chapter{Backflash Propagation and Detection Security}
+\section{Backflash Propagation and Detection Security}
 
-\section{Backflash Emission and Security Risks}
+\subsection{Backflash Emission and Security Risks}
 
 Although BB84 can reveal certain eavesdropping attacks through an increase in the QBER, real SPAD detectors may introduce additional security vulnerabilities.
 
@@ -278,7 +285,7 @@ Eve could potentially detect these photons and deduce which of Bob's detectors r
 \end{figure}
 
 
-\section{Experimental Setup: SP-OTDR}
+\subsection{Experimental Setup: SP-OTDR}
 
 The backflash emission is characterized using a Single-Photon Optical Time-Domain Reflectometry (SP-OTDR) setup as shown in Figure~\ref{fig:sp_otdr_setup}.
 
@@ -295,7 +302,7 @@ The backflash emission is characterized using a Single-Photon Optical Time-Domai
 A pulsed laser source is attenuated to the single-photon level and directed towards the Detector Under Test (DUT). When a photon triggers an avalanche, the DUT may emit backflash photons that propagate backwards through the optical fiber.
 An optical circulator redirects the backward propagating light towards a reference InGaAs/InP SPAD detector. By recording the detection times of both detectors, temporal correlations can be analyzed to identify the backflash signal and distinguish it from background events and optical reflections.
 
-\section{Information Leakage Estimation}
+\subsection{Information Leakage Estimation}
 
 The backflash emission can be quantified by analyzing the temporal correlations between the DUT and the reference detector.
 
@@ -319,5 +326,36 @@ where:
 
     \item $\eta_{\mathrm{OTDR}}$ is the detection efficiency of the reference SPAD.
 \end{itemize}
+
+
+\chapter {Experiment I: BB84 Demonstration}
+
+\section{Experimental Setup}
+
+
+To physically conduct the laboratory experiments, "EDU-QCRY1 Quantum Cryptography Demonstration Kit" of Thorlabs was used. The kit provides the following components:
+For addition information look reference to the Thorlabs EDU-QCRY1 manual.
+
+
+\subsection{Half Wave Plate (HWP)}
+The Half Wave Plate (HWP) is a birefringent optical device that rotates the polarization of light by a specific angle. It is used in the experimental setup to manipulate the polarization states of the photons.
+
+\subsubsection{working principle} 
+mettere derivazione
+
+\subsection{Polarizing Beam Splitter (PBS)}
+The Polarizing Beam Splitter (PBS) is an optical component that separates light into two orthogonal polarization states. It is used in the experimental setup to analyze (measure) the polarization of the photons.
+\subsubsection{working principe}
+mettere dimostrzione 
+
+\subsection{Laser, Electronics and Detectors}
+The provided laser source works at a wavelength of 635 nm and is used to generate the photons for the BB84 protocol. The electronics include a control unit that manages the timing and synchronization of the experiment. For additional information, refer to the Thorlabs EDU-QCRY1 manual.
+
+
+\section{Alice and Bob}
+
+In this first part of the experiment, we only consider the communication between Alice and Bob. The goal is to produce a shared secret kay to encript and decrypt a messege sent by Alice.
+
+
 
 \end{document}
