@@ -31,8 +31,7 @@ N_env_vec = df.iloc[33:43, 0].to_numpy()
 lambdaa = 1550*10**(-9)
 u_lambdaa = 10**(-10)
 att_fix =46.5
-u_att_fix = 0
-u_att_var = 0
+u_tau = 0.02
 t = 1
 u_t = 1*10**(-3)
 C = 1
@@ -89,11 +88,10 @@ for i in range(6):
     C_formula = ufloat(C,u_C, tag='C')
     t_formula = ufloat(t,u_t, tag='t')
     lambda_formula = ufloat(lambdaa,u_lambdaa, tag='lambda')
-    att_fix_formula = ufloat(att_fix,u_att_fix, tag='att_fix')
-    att_var = ufloat(attenuations[i],u_att_var, tag='att_var')
-    tau = 10**(-(att_fix_formula+att_var) / 10)
+    tau = 10**(-(att_fix+attenuations[i]) / 10)
+    tau_formula = ufloat(tau,tau*u_tau, tag='tau')
 
-    eff = ( h*c * (N - Nenv)) / (lambda_formula*t_formula*tau*C_formula*(P - Penv))
+    eff = ( h*c * (N - Nenv)) / (lambda_formula*t_formula*tau_formula*C_formula*(P - Penv))
     R = N / t_formula
     R_A = N / t
     u_R_A.append(R_A.std_dev)
@@ -124,8 +122,7 @@ out = fit.run()
 
 m,eta_0 = out.beta
 u_m, u_eta_0_A = out.sd_beta
-u_tau = (np.log(10) / 10) * np.sqrt(u_att_fix**2 + u_att_var**2)
-u_eta_0_B = eta_0 * np.sqrt((u_lambdaa/lambdaa)**2 + (u_t / t)**2 + (u_tau/tau.nominal_value)**2 + (u_C/C)**2)
+u_eta_0_B = eta_0 * np.sqrt((u_lambdaa/lambdaa)**2 + (u_t / t)**2 + u_tau**2 + (u_C/C)**2)
 
 
 
