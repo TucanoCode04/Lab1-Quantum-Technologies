@@ -75,6 +75,7 @@ for i in range(6):
     e = efficiency(means_N[i],N_env,means_P[i],P_env,attenuations[i])
     efficiencies.append(e)
 
+#calculate the uncertainty of the efficiency, separing then from type A and type B
 u_efficiencies = []
 u_R = []
 u_eta_A = []
@@ -110,20 +111,21 @@ for i in range(6):
     u_eta_B.append(np.sqrt(sum_b))
 
 
-#fit 
+#fit using ODR and using only type A uncertainty
+rates = np.array(means_N) / t #the elements on x-axis
 def line(beta,x):
     m,q = beta
     return m*x + q
 
 model = odr.Model(line)
-data = odr.RealData(means_N,efficiencies,sx=u_R_A,sy=u_eta_A)
+data = odr.RealData(rates,efficiencies,sx=u_R_A,sy=u_eta_A)
 fit = odr.ODR(data,model,beta0=[0.0,np.mean(efficiencies)])
 out = fit.run()
 
 m,eta_0 = out.beta
 u_m, u_eta_0_A = out.sd_beta
 u_eta_0_B = eta_0 * np.sqrt((u_lambdaa/lambdaa)**2 + (u_t / t)**2 + u_tau**2 + (u_C/C)**2)
-
+u_eta_0 = np.sqrt(u_eta_0_A**2 + u_eta_0_B**2)
 
 
 
